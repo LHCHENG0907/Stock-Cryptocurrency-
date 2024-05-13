@@ -11,10 +11,10 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 import matplotlib.pyplot as plt
 
 # Set stock code and date ranges
-stock_code = "stock or crypto or coin ticker"
-start_date_historical = "start_date"
-end_date_historical = "end_date"
-end_date_lstm = "end_date"
+stock_code = "TSM"
+start_date_historical = "2023-01-01"
+end_date_historical = "2023-12-30"
+end_date_lstm = "2023-12-30"
 
 # Download historical data
 historical_data = yf.download(stock_code, start=start_date_historical, end=end_date_historical)
@@ -102,7 +102,9 @@ for _ in range(len(pd.date_range(start=end_date_lstm, periods=30, freq='B'))):
     next_month_prediction = scaler.inverse_transform(next_month_prediction)
 
     # Append the prediction to the future data
-    future_data = future_data.append(pd.DataFrame(next_month_prediction, columns=['Close'], index=[future_data.index[-1] + pd.Timedelta(days=1)]))
+    next_month_date = future_data.index[-1] + pd.Timedelta(days=1)
+    future_data = pd.concat([future_data, pd.DataFrame(next_month_prediction, columns=['Close'], index=[next_month_date])])
+
 
 # Plotting
 plt.figure(figsize=(12, 6))
